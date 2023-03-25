@@ -1,0 +1,27 @@
+---
+- name: network configuration
+  hosts: all
+  gather_facts: no
+  become: true
+  become_method: sudo
+  become_user: root
+  vars:
+    - devname: enp1s0
+    - newip: 192.168.1.210/24
+  tasks:
+     - name: configure NIC
+       nmcli:
+          conn_name: "{{ devname }}"
+          ifname: "{{ devname }}"
+          ip4: "{{ newip }}"
+          gw4: 192.168.1.1
+          dns4:
+             - 192.168.1.1
+          state: present
+          autoconnect: yes
+          type: ethernet
+
+  - name: Bring Net ZDevice Up
+    shell: nmcli connection up enp1s0
+    #args:#
+    #  executable: /bin/bash
